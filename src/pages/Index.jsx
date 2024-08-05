@@ -4,11 +4,24 @@ import { Textarea } from "@/components/ui/textarea"
 import { Code, Zap, Rocket, MessageSquare, AlertTriangle, Sparkles, Check, Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useQuery } from "@tanstack/react-query"
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://models.inference.ai.azure.com",
+  apiKey: process.env.GITHUB_TOKEN,
+});
 
 const generateCodeAPI = async (prompt) => {
-  // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  return `function greet() {\n  console.log("Hello from CodeGenius AI!");\n  console.log("Your prompt was: ${prompt}");\n}\n\ngreet();`;
+  const response = await client.chat.completions.create({
+    messages: [
+      { role: "system", content: "You are a helpful assistant that generates code based on user prompts." },
+      { role: "user", content: prompt }
+    ],
+    model: "gpt-4o",
+    temperature: 0.7,
+    max_tokens: 1000,
+  });
+  return response.choices[0].message.content;
 };
 
 const Index = () => {
@@ -21,7 +34,7 @@ const Index = () => {
     enabled: false,
   });
 
-  const handleGenerateCode = () => {
+  const handleGenerateCode = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
@@ -30,7 +43,16 @@ const Index = () => {
       });
       return;
     }
-    refetch();
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error generating code:", error);
+      toast({
+        title: "Error",
+        description: "An error occurred while generating code. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
