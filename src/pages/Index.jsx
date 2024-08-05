@@ -186,4 +186,18 @@ const FeatureCard = ({ icon, title, description }) => (
   </div>
 );
 
+const FeatureCard = ({ icon, title, description }) => (
+  <div className="bg-white overflow-hidden shadow rounded-lg">
+    <div className="px-4 py-5 sm:p-6">
+      <div className="flex items-center">
+        <div className="flex-shrink-0">{icon}</div>
+        <div className="ml-5 w-0 flex-1">
+          <dt className="text-lg font-medium text-gray-900 truncate">{title}</dt>
+          <dd className="mt-1 text-sm text-gray-500">{description}</dd>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default Index;
