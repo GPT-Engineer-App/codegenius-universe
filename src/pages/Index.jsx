@@ -4,33 +4,32 @@ import { Textarea } from "@/components/ui/textarea"
 import { Code, Zap, Rocket, MessageSquare, AlertTriangle, Sparkles, Check, Loader2 } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { useQuery } from "@tanstack/react-query"
-import OpenAI from "openai";
 
-const client = new OpenAI({
-  baseURL: "https://models.inference.ai.azure.com",
-  apiKey: process.env.GITHUB_TOKEN,
-});
-
-const generateCodeAPI = async (prompt) => {
-  const response = await client.chat.completions.create({
-    messages: [
-      { role: "system", content: "You are a helpful assistant that generates code based on user prompts." },
-      { role: "user", content: prompt }
-    ],
-    model: "gpt-4o",
-    temperature: 0.7,
-    max_tokens: 1000,
-  });
-  return response.choices[0].message.content;
+const generateCodeAPI = async (client, prompt) => {
+  try {
+    const response = await client.chat.completions.create({
+      messages: [
+        { role: "system", content: "You are a helpful assistant that generates code based on user prompts." },
+        { role: "user", content: prompt }
+      ],
+      model: "gpt-4",
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error("Error generating code:", error);
+    throw new Error("Failed to generate code. Please check your OpenAI settings.");
+  }
 };
 
-const Index = () => {
+const Index = ({ openaiClient }) => {
   const [prompt, setPrompt] = useState('');
   const { toast } = useToast();
 
   const { data: generatedCode, refetch, isFetching, isError } = useQuery({
     queryKey: ['generateCode', prompt],
-    queryFn: () => generateCodeAPI(prompt),
+    queryFn: () => generateCodeAPI(openaiClient, prompt),
     enabled: false,
   });
 
