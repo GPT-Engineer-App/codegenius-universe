@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Code, Zap, Rocket, Users } from "lucide-react"
+import { Code, Zap, Rocket, Users, MessageSquare, AlertTriangle, Sparkles, Check } from "lucide-react"
 
 const Index = () => {
   const [prompt, setPrompt] = useState('');
@@ -89,6 +89,44 @@ const Index = () => {
                 title="AI-Powered Optimization"
                 description="Get suggestions for improving performance and code quality."
               />
+              <FeatureCard
+                icon={<MessageSquare className="h-8 w-8 text-indigo-600" />}
+                title="Intelligent Prompt Interpretation"
+                description="Advanced AI understands and interprets complex coding requirements."
+              />
+              <FeatureCard
+                icon={<AlertTriangle className="h-8 w-8 text-indigo-600" />}
+                title="Syntax Error Detection"
+                description="Automatically detect and suggest fixes for syntax errors in real-time."
+              />
+              <FeatureCard
+                icon={<Sparkles className="h-8 w-8 text-indigo-600" />}
+                title="AI-Powered Code Completion"
+                description="Intelligent code suggestions to speed up your development process."
+              />
+            </div>
+          </div>
+
+          <div className="mt-16 bg-gray-50 py-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Advanced Capabilities</h2>
+            <div className="max-w-3xl mx-auto">
+              <ul className="space-y-4">
+                {[
+                  "Natural Language to Code Conversion",
+                  "Cross-Platform Compatibility",
+                  "Code Optimization Suggestions",
+                  "Intelligent Context-Aware Recommendations",
+                  "Customizable Output Formats",
+                  "Integration with Popular IDEs",
+                  "Version Control System Integration",
+                  "Collaborative Coding Support"
+                ].map((feature, index) => (
+                  <li key={index} className="flex items-center">
+                    <Check className="h-6 w-6 text-green-500 mr-2" />
+                    <span className="text-lg text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
