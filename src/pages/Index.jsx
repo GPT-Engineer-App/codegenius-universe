@@ -1,36 +1,16 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Code, Zap, Rocket, MessageSquare, AlertTriangle, Sparkles, Check, Loader2 } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
-import { useQuery } from "@tanstack/react-query"
-
-const generateCodeAPI = async (prompt) => {
-  // Simulating API call with a delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  return `function greet() {\n  console.log("Hello from CodeGenius AI!");\n  console.log("Your prompt was: ${prompt}");\n}\n\ngreet();`;
-};
+import { Code, Zap, Rocket, Users, MessageSquare, AlertTriangle, Sparkles, Check } from "lucide-react"
 
 const Index = () => {
   const [prompt, setPrompt] = useState('');
-  const { toast } = useToast();
-
-  const { data: generatedCode, refetch, isFetching, isError } = useQuery({
-    queryKey: ['generateCode', prompt],
-    queryFn: () => generateCodeAPI(prompt),
-    enabled: false,
-  });
+  const [generatedCode, setGeneratedCode] = useState('');
 
   const handleGenerateCode = () => {
-    if (!prompt.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a prompt before generating code.",
-        variant: "destructive",
-      });
-      return;
-    }
-    refetch();
+    // Simulating code generation
+    setGeneratedCode(`function greet() {\n  console.log("Hello from CodeGenius AI!");\n}\n\ngreet();`);
   };
 
   return (
@@ -65,7 +45,7 @@ const Index = () => {
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg p-8 flex flex-col justify-center items-center">
+            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex flex-col justify-center items-center">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">Transform Ideas into Code</h1>
               <p className="text-xl text-gray-600 mb-8">Harness the power of AI to generate high-quality code in seconds</p>
               <div className="w-full max-w-md space-y-4">
@@ -74,31 +54,13 @@ const Index = () => {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="w-full"
-                  rows={5}
                 />
-                <Button 
-                  onClick={handleGenerateCode} 
-                  className="w-full" 
-                  disabled={isFetching}
-                >
-                  {isFetching ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    'Generate Code'
-                  )}
+                <Button onClick={handleGenerateCode} className="w-full">
+                  Generate Code
                 </Button>
               </div>
             </div>
           </div>
-
-          {isError && (
-            <div className="mt-4 text-red-600 text-center">
-              An error occurred while generating code. Please try again.
-            </div>
-          )}
 
           {generatedCode && (
             <div className="mt-8 px-4 sm:px-0">
@@ -144,15 +106,6 @@ const Index = () => {
               />
             </div>
           </div>
-
-          {generatedCode && (
-            <div className="mt-8 px-4 sm:px-0">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Generated Code</h2>
-              <pre className="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
-                <code>{generatedCode}</code>
-              </pre>
-            </div>
-          )}
 
           <div className="mt-16 bg-gray-50 py-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Advanced Capabilities</h2>
