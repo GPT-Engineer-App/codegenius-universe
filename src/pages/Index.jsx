@@ -53,7 +53,7 @@ const Index = ({ openaiClient }) => {
             </div>
           </div>
         </nav>
-      </header>
+      </div>
 
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -176,9 +176,10 @@ const Index = ({ openaiClient }) => {
             <Button size="lg">Get Started for Free</Button>
           </div>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+    </main>
+  </div>
+);
 };
 
 const FeatureCard = ({ icon, title, description }) => (
