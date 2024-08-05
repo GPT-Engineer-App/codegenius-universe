@@ -1,16 +1,64 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Code, Zap, Rocket, Users, MessageSquare, AlertTriangle, Sparkles, Check } from "lucide-react"
+import { Code, Zap, Rocket, Users, MessageSquare, AlertTriangle, Sparkles, Check, Image as ImageIcon } from "lucide-react"
+import { useToast } from "@/components/ui/use-toast"
+import { useQuery } from '@tanstack/react-query'
 
 const Index = () => {
   const [prompt, setPrompt] = useState('');
   const [generatedCode, setGeneratedCode] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const { toast } = useToast();
+
+  const generateCode = async (prompt, imageUrl) => {
+    // Simulating API call to AI service
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return `function greet() {\n  console.log("Hello from CodeGenius AI!");\n  // Generated based on prompt: ${prompt}\n  ${imageUrl ? '// Image analysis included' : ''}\n}\n\ngreet();`;
+  };
+
+  const { data: code, isLoading, isError, refetch } = useQuery({
+    queryKey: ['generateCode', prompt, imageUrl],
+    queryFn: () => generateCode(prompt, imageUrl),
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (code) {
+      setGeneratedCode(code);
+      toast({
+        title: "Code Generated",
+        description: "Your AI-powered code is ready!",
+      });
+    }
+  }, [code, toast]);
 
   const handleGenerateCode = () => {
-    // Simulating code generation
-    setGeneratedCode(`function greet() {\n  console.log("Hello from CodeGenius AI!");\n}\n\ngreet();`);
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a prompt before generating code.",
+        variant: "destructive",
+      });
+      return;
+    }
+    refetch();
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+        toast({
+          title: "Image Uploaded",
+          description: "Your image has been successfully uploaded for AI analysis.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -45,7 +93,7 @@ const Index = () => {
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex flex-col justify-center items-center">
+            <div className="border-4 border-dashed border-gray-200 rounded-lg p-8 flex flex-col justify-center items-center">
               <h1 className="text-4xl font-bold text-gray-900 mb-4">Transform Ideas into Code</h1>
               <p className="text-xl text-gray-600 mb-8">Harness the power of AI to generate high-quality code in seconds</p>
               <div className="w-full max-w-md space-y-4">
@@ -55,9 +103,31 @@ const Index = () => {
                   onChange={(e) => setPrompt(e.target.value)}
                   className="w-full"
                 />
-                <Button onClick={handleGenerateCode} className="w-full">
-                  Generate Code
-                </Button>
+                <div className="flex items-center space-x-4">
+                  <Button onClick={handleGenerateCode} className="flex-1" disabled={isLoading}>
+                    {isLoading ? 'Generating...' : 'Generate Code'}
+                  </Button>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <Button
+                    onClick={() => document.getElementById('image-upload').click()}
+                    variant="outline"
+                  >
+                    <ImageIcon className="mr-2 h-4 w-4" />
+                    Upload Image
+                  </Button>
+                </div>
+                {imageUrl && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-500 mb-2">Uploaded Image:</p>
+                    <img src={imageUrl} alt="Uploaded" className="max-w-full h-auto rounded-lg" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -71,23 +141,29 @@ const Index = () => {
             </div>
           )}
 
+          {isError && (
+            <div className="mt-8 px-4 sm:px-0">
+              <p className="text-red-500">An error occurred while generating code. Please try again.</p>
+            </div>
+          )}
+
           <div className="mt-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Key Features</h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               <FeatureCard
                 icon={<Code className="h-8 w-8 text-indigo-600" />}
                 title="Multi-Language Support"
-                description="Generate code in a wide range of programming languages and frameworks."
+                description="Generate code in a wide range of programming languages and frameworks using advanced AI models."
               />
               <FeatureCard
                 icon={<Zap className="h-8 w-8 text-indigo-600" />}
-                title="Real-Time Preview"
-                description="Instantly view generated code as you type or modify prompts."
+                title="Real-Time AI Generation"
+                description="Experience lightning-fast code generation powered by state-of-the-art AI algorithms."
               />
               <FeatureCard
                 icon={<Rocket className="h-8 w-8 text-indigo-600" />}
                 title="AI-Powered Optimization"
-                description="Get suggestions for improving performance and code quality."
+                description="Leverage machine learning for intelligent code optimization and performance enhancements."
               />
               <FeatureCard
                 icon={<MessageSquare className="h-8 w-8 text-indigo-600" />}
@@ -102,7 +178,12 @@ const Index = () => {
               <FeatureCard
                 icon={<Sparkles className="h-8 w-8 text-indigo-600" />}
                 title="AI-Powered Code Completion"
-                description="Intelligent code suggestions to speed up your development process."
+                description="Intelligent code suggestions to speed up your development process using predictive AI models."
+              />
+              <FeatureCard
+                icon={<ImageIcon className="h-8 w-8 text-indigo-600" />}
+                title="Image-to-Code AI"
+                description="Transform images into code snippets using advanced computer vision and natural language processing."
               />
             </div>
           </div>
