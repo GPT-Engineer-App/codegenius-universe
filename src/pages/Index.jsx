@@ -138,15 +138,6 @@ const Index = ({ openaiClient }) => {
             </div>
           </div>
 
-          {generatedCode && (
-            <div className="mt-8 px-4 sm:px-0">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Generated Code</h2>
-              <pre className="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
-                <code>{generatedCode}</code>
-              </pre>
-            </div>
-          )}
-
           <div className="mt-16 bg-gray-50 py-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Advanced Capabilities</h2>
             <div className="max-w-3xl mx-auto">
@@ -176,10 +167,9 @@ const Index = ({ openaiClient }) => {
             <Button size="lg">Get Started for Free</Button>
           </div>
         </div>
-      </div>
-    </main>
-  </div>
-);
+      </main>
+    </div>
+  );
 };
 
 const FeatureCard = ({ icon, title, description }) => (
