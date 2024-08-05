@@ -5,30 +5,37 @@ import { Code, Zap, Rocket, MessageSquare, AlertTriangle, Sparkles, Check, Loade
 import { useToast } from "@/components/ui/use-toast"
 import { useQuery } from "@tanstack/react-query"
 
-const generateCodeAPI = async (client, prompt) => {
-  try {
-    const response = await client.chat.completions.create({
-      messages: [
-        { role: "system", content: "You are a helpful assistant that generates code based on user prompts." },
-        { role: "user", content: prompt }
-      ],
-      model: "gpt-4",
-      temperature: 0.7,
-      max_tokens: 1000,
-    });
-    return response.choices[0].message.content;
-  } catch (error) {
-    console.error("Error generating code:", error);
-    throw new Error("Failed to generate code. Please check your OpenAI settings.");
-  }
+const generateCodeAPI = async (prompt) => {
+  // Simulating API call with a delay
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  return `function greet() {\n  console.log("Hello from CodeGenius AI!");\n  console.log("Your prompt was: ${prompt}");\n}\n\ngreet();`;
 };
 
-const Index = ({ openaiClient }) => {
+const Index = () => {
+  const [prompt, setPrompt] = useState('');
+  const { toast } = useToast();
+
+  const { data: generatedCode, refetch, isFetching, isError } = useQuery({
+    queryKey: ['generateCode', prompt],
+    queryFn: () => generateCodeAPI(prompt),
+    enabled: false,
+  });
+
+  const handleGenerateCode = () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a prompt before generating code.",
+        variant: "destructive",
+      });
+      return;
+    }
+    refetch();
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to CodeGenius AI</h1>
-      <p className="text-xl text-gray-600 mb-8">This is a basic test page to ensure content is rendering.</p>
-      <Button onClick={() => alert('Button clicked!')}>Test Button</Button>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
@@ -53,7 +60,7 @@ const Index = ({ openaiClient }) => {
             </div>
           </div>
         </nav>
-      </div>
+      </header>
 
       <main>
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -138,6 +145,15 @@ const Index = ({ openaiClient }) => {
             </div>
           </div>
 
+          {generatedCode && (
+            <div className="mt-8 px-4 sm:px-0">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">Generated Code</h2>
+              <pre className="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto">
+                <code>{generatedCode}</code>
+              </pre>
+            </div>
+          )}
+
           <div className="mt-16 bg-gray-50 py-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Advanced Capabilities</h2>
             <div className="max-w-3xl mx-auto">
@@ -171,20 +187,6 @@ const Index = ({ openaiClient }) => {
     </div>
   );
 };
-
-const FeatureCard = ({ icon, title, description }) => (
-  <div className="bg-white overflow-hidden shadow rounded-lg">
-    <div className="px-4 py-5 sm:p-6">
-      <div className="flex items-center">
-        <div className="flex-shrink-0">{icon}</div>
-        <div className="ml-5 w-0 flex-1">
-          <dt className="text-lg font-medium text-gray-900 truncate">{title}</dt>
-          <dd className="mt-1 text-sm text-gray-500">{description}</dd>
-        </div>
-      </div>
-    </div>
-  </div>
-);
 
 const FeatureCard = ({ icon, title, description }) => (
   <div className="bg-white overflow-hidden shadow rounded-lg">
