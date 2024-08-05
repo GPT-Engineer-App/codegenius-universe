@@ -24,39 +24,11 @@ const generateCodeAPI = async (client, prompt) => {
 };
 
 const Index = ({ openaiClient }) => {
-  const [prompt, setPrompt] = useState('');
-  const { toast } = useToast();
-
-  const { data: generatedCode, refetch, isFetching, isError } = useQuery({
-    queryKey: ['generateCode', prompt],
-    queryFn: () => generateCodeAPI(openaiClient, prompt),
-    enabled: false,
-  });
-
-  const handleGenerateCode = async () => {
-    if (!prompt.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a prompt before generating code.",
-        variant: "destructive",
-      });
-      return;
-    }
-    try {
-      await refetch();
-    } catch (error) {
-      console.error("Error generating code:", error);
-      toast({
-        title: "Error",
-        description: "An error occurred while generating code. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
+      <h1 className="text-4xl font-bold text-gray-900 mb-4">Welcome to CodeGenius AI</h1>
+      <p className="text-xl text-gray-600 mb-8">This is a basic test page to ensure content is rendering.</p>
+      <Button onClick={() => alert('Button clicked!')}>Test Button</Button>
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
